@@ -53,43 +53,60 @@ def calcular_bono_rentabilidad_danos(produccion, siniestralidad):
             return porcentaje, bono, f"✅ Aplica. Siniestralidad menor o igual a {limite}% (Bono del {porcentaje}%)"
     return 0.0, 0.0, "❌ No aplica. Siniestralidad debe ser menor o igual a 30%."
 
-st.set_page_config(page_title="Simulador de Bonos HDI 2025")
-st.title("Simulador de Bonos")
-st.subheader("HDI 2025")
+st.set_page_config(page_title="Simulador de Bonos HDI 2025", layout="centered")
+st.markdown("""
+    <h1 style='text-align: center; font-size: 40px;'>Simulador de Bonos</h1>
+    <h3 style='text-align: center;'>HDI 2025</h3>
+    <br>
+""", unsafe_allow_html=True)
 
-nombre_agente = st.text_input("Nombre del Agente")
-tipo_bono = st.selectbox("Tipo de Bono", ["", "Autos", "Daños"])
-
-if tipo_bono:
-    produccion_input = st.text_input("Producción Total (en pesos)")
+with st.form("form_bonos"):
+    nombre_agente = st.text_input("Nombre del Agente")
+    tipo_bono = st.selectbox("Tipo de Bono", ["", "Autos", "Daños"])
+    produccion_input = st.text_input("Producción Total ($)", placeholder="Ej. $1,000,000.00")
     siniestralidad = st.number_input("Siniestralidad (%)", min_value=0.0, max_value=100.0, step=0.1)
+    submitted = st.form_submit_button("Calcular Bonos")
 
-    if st.button("Calcular Bonos"):
-        try:
-            produccion = limpiar_formato(produccion_input)
+if submitted:
+    try:
+        produccion = limpiar_formato(produccion_input)
 
-            st.markdown(f"**Agente:** {nombre_agente}")
-            st.markdown(f"**Tipo:** {tipo_bono}")
-            st.markdown(f"**Producción:** {formato_pesos(produccion)}")
-            st.markdown(f"**Siniestralidad:** {siniestralidad:.2f}%")
+        st.markdown("---")
+        st.markdown("### 📊 Datos Ingresados:")
+        st.markdown(f"- Producción: **{formato_pesos(produccion)}**")
+        st.markdown(f"- Siniestralidad: **{siniestralidad:.2f}%**")
 
-            if tipo_bono == "Autos":
-                pct_prod, bono_prod, msg_prod = calcular_bono_produccion_autos(produccion)
-                pct_rent, bono_rent, msg_rent = calcular_bono_rentabilidad_autos(produccion, siniestralidad)
-            else:
-                pct_prod, bono_prod, msg_prod = calcular_bono_produccion_danos(produccion)
-                pct_rent, bono_rent, msg_rent = calcular_bono_rentabilidad_danos(produccion, siniestralidad)
+        st.markdown("---")
+        st.markdown(f"### 📄 Resultado para **{nombre_agente.upper()}**")
 
-            st.markdown("---")
-            st.markdown("### BONO DE PRODUCCIÓN")
-            st.markdown(f"**% Aplicado:** {pct_prod}%")
-            st.markdown(f"**Monto de Bono:** {formato_pesos(bono_prod)}")
-            st.markdown(f"{msg_prod}")
+        if tipo_bono == "Autos":
+            pct_prod, bono_prod, msg_prod = calcular_bono_produccion_autos(produccion)
+            pct_rent, bono_rent, msg_rent = calcular_bono_rentabilidad_autos(produccion, siniestralidad)
+        elif tipo_bono == "Daños":
+            pct_prod, bono_prod, msg_prod = calcular_bono_produccion_danos(produccion)
+            pct_rent, bono_rent, msg_rent = calcular_bono_rentabilidad_danos(produccion, siniestralidad)
+        else:
+            st.warning("Selecciona un tipo de bono válido.")
+            st.stop()
 
-            st.markdown("### BONO DE RENTABILIDAD")
-            st.markdown(f"**% Aplicado:** {pct_rent}%")
-            st.markdown(f"**Monto de Bono:** {formato_pesos(bono_rent)}")
-            st.markdown(f"{msg_rent}")
+        total_bono = bono_prod + bono_rent
 
-        except Exception as e:
-            st.error("Ocurrió un error al calcular. Verifica los datos ingresados.")
+        st.markdown(f"- Bono Producción ({pct_prod:.2f}%): **{formato_pesos(bono_prod)}**")
+        st.markdown(f"- {msg_prod}")
+
+        st.markdown(f"- Bono Rentabilidad ({pct_rent:.2f}%): **{formato_pesos(bono_rent)}**")
+        st.markdown(f"- {msg_rent}")
+
+        st.markdown(f"\n📌 **Total del Bono: {formato_pesos(total_bono)}**")
+
+        st.markdown("---")
+        st.markdown("### 📝 Notas Aclaratorias")
+        if tipo_bono == "Autos" and siniestralidad >= 60:
+            st.markdown("- ⚠ Siniestralidad ≥60%, se aplica límite máximo permitido.")
+        elif tipo_bono == "Daños" and siniestralidad > 30:
+            st.markdown("- ⚠ Siniestralidad mayor a 30%, fuera de tabla.")
+        else:
+            st.markdown("- ✓ Siniestralidad dentro de parámetros de tabla.")
+
+    except Exception as e:
+        st.error("Error al calcular. Verifica los datos ingresados correctamente.")
