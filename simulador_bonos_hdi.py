@@ -60,6 +60,9 @@ st.markdown("""
     <br>
 """, unsafe_allow_html=True)
 
+# Mensaje aclaratorio centrado antes del formulario
+st.markdown("<p style='text-align: center; font-size: 14px; color: gray;'>Aplican restricciones y condiciones conforme al cuaderno oficial de HDI Seguros 2025.</p>", unsafe_allow_html=True)
+
 with st.form("form_bonos"):
     nombre_agente = st.text_input("Nombre del Agente")
     tipo_bono = st.selectbox("Tipo de Bono", ["", "Autos", "Daños"])
@@ -107,6 +110,3 @@ if submitted:
             st.markdown("- ⚠ Siniestralidad mayor a 30%, fuera de tabla.")
         else:
             st.markdown("- ✓ Siniestralidad dentro de parámetros de tabla.")
-
-    except Exception as e:
-        st.error("Error al calcular. Verifica los datos ingresados correctamente.")
