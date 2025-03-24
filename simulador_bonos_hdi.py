@@ -110,3 +110,5 @@ if submitted:
             st.markdown("- ⚠ Siniestralidad mayor a 30%, fuera de tabla.")
         else:
             st.markdown("- ✓ Siniestralidad dentro de parámetros de tabla.")
+    except Exception as e:
+        st.error(f"Ocurrió un error al procesar los datos: {e}")
