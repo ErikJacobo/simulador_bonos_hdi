@@ -60,15 +60,15 @@ st.markdown("""
     <br>
 """, unsafe_allow_html=True)
 
-# Mensaje aclaratorio centrado antes del formulario
-st.markdown("<p style='text-align: center; font-size: 14px; color: gray;'>Aplican restricciones y condiciones conforme al cuaderno oficial de HDI Seguros 2025.</p>", unsafe_allow_html=True)
-
 with st.form("form_bonos"):
     nombre_agente = st.text_input("Nombre del Agente")
     tipo_bono = st.selectbox("Tipo de Bono", ["", "Autos", "Daños"])
     produccion_input = st.text_input("Producción Total ($)", placeholder="Ej. $1,000,000.00")
     siniestralidad = st.number_input("Siniestralidad (%)", min_value=0.0, max_value=100.0, step=0.1)
     submitted = st.form_submit_button("Calcular Bonos")
+
+st.markdown("<hr style='margin-top: 30px; margin-bottom:10px'>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; font-size: 14px; color: gray;'>Aplican restricciones y condiciones conforme al cuaderno oficial de HDI Seguros 2025.</p>", unsafe_allow_html=True)
 
 if submitted:
     try:
@@ -94,13 +94,14 @@ if submitted:
 
         total_bono = bono_prod + bono_rent
 
-        st.markdown(f"- Bono Producción ({pct_prod:.2f}%): **{formato_pesos(bono_prod)}**")
-        st.markdown(f"- {msg_prod}")
+        st.markdown("### 💵 Resultados de Bono:")
+        st.markdown(f"- Bono de Producción: **{pct_prod:.2f}%** → {formato_pesos(bono_prod)} → {msg_prod}")
+        st.markdown(f"- Bono de Rentabilidad: **{pct_rent:.2f}%** → {formato_pesos(bono_rent)} → {msg_rent}")
 
-        st.markdown(f"- Bono Rentabilidad ({pct_rent:.2f}%): **{formato_pesos(bono_rent)}**")
-        st.markdown(f"- {msg_rent}")
+        st.markdown(f"\n🧾 **Total del Bono: {formato_pesos(total_bono)}**")
 
-        st.markdown(f"\n📌 **Total del Bono: {formato_pesos(total_bono)}**")
+        st.markdown("<hr style='margin-top: 30px; margin-bottom:10px'>", unsafe_allow_html=True)
+        st.markdown("<p style='text-align: center; font-size: 14px; color: gray;'>Aplican restricciones y condiciones conforme al cuaderno oficial de HDI Seguros 2025.</p>", unsafe_allow_html=True)
 
         st.markdown("---")
         st.markdown("### 📝 Notas Aclaratorias")
