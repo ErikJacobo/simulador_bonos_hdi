@@ -68,7 +68,7 @@ st.markdown("""
 
 submitted = False
 nombre_agente = ""
-tipo_bono = ""
+tipo_ramo = ""
 produccion_input = ""
 siniestralidad = 0.0
 
@@ -77,7 +77,7 @@ if 'formulario_mostrado' not in st.session_state:
 
 if st.session_state.formulario_mostrado:
     nombre_agente = st.text_input("Nombre del Agente")
-    tipo_bono = st.selectbox("Selecciona el ramo a simular", ["", "Autos", "Daños"])
+    tipo_ramo = st.selectbox("Selecciona el ramo a simular", ["", "Autos", "Daños"])
     produccion_input = st.text_input("Producción Total ($)", placeholder="Ej. $1,000,000.00")
     siniestralidad = st.number_input("Siniestralidad (%)", min_value=0.0, max_value=100.0, step=0.1)
     submitted = st.button("Calcular Bonos")
