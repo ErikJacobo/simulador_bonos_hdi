@@ -22,7 +22,7 @@ def calcular_bono_produccion_autos(produccion):
     for minimo, porcentaje in tabla:
         if produccion >= minimo:
             bono = produccion * (porcentaje / 100)
-            return porcentaje, bono, f"✅ Aplica. Producción supera ${minimo:,.0f} (Bono del {porcentaje}%)"
+            return porcentaje, bono, f"✅ Aplica según tabla con siniestralidad permitida."
     return 0.0, 0.0, "❌ No aplica. Producción mínima requerida: $400,001 para bono del 1%."
 
 def calcular_bono_rentabilidad_autos(produccion, siniestralidad):
@@ -32,7 +32,7 @@ def calcular_bono_rentabilidad_autos(produccion, siniestralidad):
     for limite, porcentaje in tabla:
         if siniestralidad <= limite:
             bono = produccion * (porcentaje / 100)
-            return porcentaje, bono, f"✅ Aplica. Siniestralidad menor o igual a {limite}% (Bono del {porcentaje}%)"
+            return porcentaje, bono, f"✅ Aplica por siniestralidad del {siniestralidad:.2f}%."
     return 0.0, 0.0, "❌ No aplica. Siniestralidad debe ser menor o igual a 60%."
 
 def calcular_bono_produccion_danos(produccion):
@@ -40,7 +40,7 @@ def calcular_bono_produccion_danos(produccion):
     for minimo, porcentaje in tabla:
         if produccion >= minimo:
             bono = produccion * (porcentaje / 100)
-            return porcentaje, bono, f"✅ Aplica. Producción supera ${minimo:,.0f} (Bono del {porcentaje}%)"
+            return porcentaje, bono, f"✅ Aplica según tabla con siniestralidad permitida."
     return 0.0, 0.0, "❌ No aplica. Producción mínima requerida: $500,001 para bono del 2%."
 
 def calcular_bono_rentabilidad_danos(produccion, siniestralidad):
@@ -50,15 +50,23 @@ def calcular_bono_rentabilidad_danos(produccion, siniestralidad):
     for limite, porcentaje in tabla:
         if siniestralidad <= limite:
             bono = produccion * (porcentaje / 100)
-            return porcentaje, bono, f"✅ Aplica. Siniestralidad menor o igual a {limite}% (Bono del {porcentaje}%)"
+            return porcentaje, bono, f"✅ Aplica por siniestralidad del {siniestralidad:.2f}%."
     return 0.0, 0.0, "❌ No aplica. Siniestralidad debe ser menor o igual a 30%."
 
 st.set_page_config(page_title="Simulador de Bonos HDI 2025", layout="centered")
+
 st.markdown("""
-    <h1 style='text-align: center; font-size: 40px;'>Simulador de Bonos</h1>
-    <h3 style='text-align: center;'>HDI 2025</h3>
+    <div style='display: flex; justify-content: space-between; align-items: center;'>
+        <div>
+            <h1 style='font-size: 40px;'>Simulador de Bonos</h1>
+            <h3>HDI 2025</h3>
+        </div>
+        <img src='https://i.imgur.com/lY9n4jc.png' width='100'/>
+    </div>
     <br>
 """, unsafe_allow_html=True)
+
+st.markdown("<p style='text-align: center; font-size: 14px; color: gray;'>Aplican restricciones y condiciones conforme al cuaderno oficial de HDI Seguros 2025.</p>", unsafe_allow_html=True)
 
 with st.form("form_bonos"):
     nombre_agente = st.text_input("Nombre del Agente")
@@ -66,9 +74,6 @@ with st.form("form_bonos"):
     produccion_input = st.text_input("Producción Total ($)", placeholder="Ej. $1,000,000.00")
     siniestralidad = st.number_input("Siniestralidad (%)", min_value=0.0, max_value=100.0, step=0.1)
     submitted = st.form_submit_button("Calcular Bonos")
-
-st.markdown("<hr style='margin-top: 30px; margin-bottom:10px'>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; font-size: 14px; color: gray;'>Aplican restricciones y condiciones conforme al cuaderno oficial de HDI Seguros 2025.</p>", unsafe_allow_html=True)
 
 if submitted:
     try:
@@ -80,7 +85,7 @@ if submitted:
         st.markdown(f"- Siniestralidad: **{siniestralidad:.2f}%**")
 
         st.markdown("---")
-        st.markdown(f"### 📄 Resultado para **{nombre_agente.upper()}**")
+        st.markdown(f"### 📝 Resultado para **{nombre_agente.upper()}**")
 
         if tipo_bono == "Autos":
             pct_prod, bono_prod, msg_prod = calcular_bono_produccion_autos(produccion)
@@ -94,22 +99,17 @@ if submitted:
 
         total_bono = bono_prod + bono_rent
 
-        st.markdown("### 💵 Resultados de Bono:")
-        st.markdown(f"- Bono de Producción: **{pct_prod:.2f}%** → {formato_pesos(bono_prod)} → {msg_prod}")
-        st.markdown(f"- Bono de Rentabilidad: **{pct_rent:.2f}%** → {formato_pesos(bono_rent)} → {msg_rent}")
+        st.markdown("### 💲 Resultados de Bono:")
+        st.markdown(f"- 🧾 **Bono de Producción:** {pct_prod:.2f}% → **{formato_pesos(bono_prod)}**")
+        st.markdown(f"  - {msg_prod}")
 
-        st.markdown(f"\n🧾 **Total del Bono: {formato_pesos(total_bono)}**")
+        st.markdown(f"- 🛡️ **Bono de Rentabilidad:** {pct_rent:.2f}% → **{formato_pesos(bono_rent)}**")
+        st.markdown(f"  - {msg_rent}")
 
-        st.markdown("<hr style='margin-top: 30px; margin-bottom:10px'>", unsafe_allow_html=True)
-        st.markdown("<p style='text-align: center; font-size: 14px; color: gray;'>Aplican restricciones y condiciones conforme al cuaderno oficial de HDI Seguros 2025.</p>", unsafe_allow_html=True)
+        st.markdown(f"\n📌 **Total del Bono {tipo_bono}: {formato_pesos(total_bono)}**")
 
         st.markdown("---")
-        st.markdown("### 📝 Notas Aclaratorias")
-        if tipo_bono == "Autos" and siniestralidad >= 60:
-            st.markdown("- ⚠ Siniestralidad ≥60%, se aplica límite máximo permitido.")
-        elif tipo_bono == "Daños" and siniestralidad > 30:
-            st.markdown("- ⚠ Siniestralidad mayor a 30%, fuera de tabla.")
-        else:
-            st.markdown("- ✓ Siniestralidad dentro de parámetros de tabla.")
+        st.markdown("<p style='text-align: center; font-size: 14px; color: gray;'>Aplican restricciones y condiciones conforme al cuaderno oficial de HDI Seguros 2025.</p>", unsafe_allow_html=True)
     except Exception as e:
         st.error(f"Ocurrió un error al procesar los datos: {e}")
+        
