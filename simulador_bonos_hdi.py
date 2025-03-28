@@ -66,16 +66,18 @@ st.markdown("""
     <br>
 """, unsafe_allow_html=True)
 
-with st.form("form_bonos"):
-    nombre_agente = st.text_input("Nombre del Agente")
-    tipo_bono = st.selectbox("Tipo de Bono", ["", "Autos", "Daños"])
-    produccion_input = st.text_input("Producción Total ($)", placeholder="Ej. $1,000,000.00")
-    siniestralidad = st.number_input("Siniestralidad (%)", min_value=0.0, max_value=100.0, step=0.1)
-    submitted = st.form_submit_button("Calcular Bonos")
-
-st.markdown("<p style='text-align: center; font-size: 14px; color: gray;'>Aplican restricciones y condiciones conforme al cuaderno oficial de HDI Seguros 2025.</p>", unsafe_allow_html=True)
+form_container = st.container()
+with form_container:
+    with st.form("form_bonos"):
+        nombre_agente = st.text_input("Nombre del Agente")
+        tipo_bono = st.selectbox("Tipo de Bono", ["", "Autos", "Daños"])
+        produccion_input = st.text_input("Producción Total ($)", placeholder="Ej. $1,000,000.00")
+        siniestralidad = st.number_input("Siniestralidad (%)", min_value=0.0, max_value=100.0, step=0.1)
+        submitted = st.form_submit_button("Calcular Bonos")
 
 if submitted:
+    form_container.empty()
+
     try:
         produccion = limpiar_formato(produccion_input)
 
