@@ -61,12 +61,10 @@ st.markdown("""
             <h1 style='font-size: 40px;'>Simulador de Bonos</h1>
             <h3>HDI 2025</h3>
         </div>
-        <img src='https://i.imgur.com/lY9n4jc.png' width='100'/>
+        <img src='https://raw.githubusercontent.com/ErikJacobo/simulador_bonos_hdi/main/link%20logo.jpg' width='100'/>
     </div>
     <br>
 """, unsafe_allow_html=True)
-
-st.markdown("<p style='text-align: center; font-size: 14px; color: gray;'>Aplican restricciones y condiciones conforme al cuaderno oficial de HDI Seguros 2025.</p>", unsafe_allow_html=True)
 
 with st.form("form_bonos"):
     nombre_agente = st.text_input("Nombre del Agente")
@@ -80,12 +78,11 @@ if submitted:
         produccion = limpiar_formato(produccion_input)
 
         st.markdown("---")
+        st.markdown(f"### 📋 Resultado para **{nombre_agente.upper()}**")
+
         st.markdown("### 📊 Datos Ingresados:")
         st.markdown(f"- Producción: **{formato_pesos(produccion)}**")
         st.markdown(f"- Siniestralidad: **{siniestralidad:.2f}%**")
-
-        st.markdown("---")
-        st.markdown(f"### 📝 Resultado para **{nombre_agente.upper()}**")
 
         if tipo_bono == "Autos":
             pct_prod, bono_prod, msg_prod = calcular_bono_produccion_autos(produccion)
@@ -99,7 +96,7 @@ if submitted:
 
         total_bono = bono_prod + bono_rent
 
-        st.markdown("### 💲 Resultados de Bono:")
+        st.markdown("### 💵 Resultados de Bono:")
         st.markdown(f"- 🧾 **Bono de Producción:** {pct_prod:.2f}% → **{formato_pesos(bono_prod)}**")
         st.markdown(f"  - {msg_prod}")
 
@@ -110,6 +107,6 @@ if submitted:
 
         st.markdown("---")
         st.markdown("<p style='text-align: center; font-size: 14px; color: gray;'>Aplican restricciones y condiciones conforme al cuaderno oficial de HDI Seguros 2025.</p>", unsafe_allow_html=True)
+
     except Exception as e:
         st.error(f"Ocurrió un error al procesar los datos: {e}")
-        
