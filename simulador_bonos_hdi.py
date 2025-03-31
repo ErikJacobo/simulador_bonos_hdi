@@ -67,26 +67,23 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 submitted = False
-nombre_agente = ""
-tipo_ramo = ""
-produccion_input = ""
-siniestralidad = 0.0
 
-if 'formulario_mostrado' not in st.session_state:
-    st.session_state.formulario_mostrado = True
+tipo_bono = ""
 
-if st.session_state.formulario_mostrado:
-    nombre_agente = st.text_input("Nombre del Agente")
-    tipo_ramo = st.selectbox("Selecciona el ramo a simular", ["", "Autos", "Daños"])
-    produccion_input = st.text_input("Producción Total ($)", placeholder="Ej. $1,000,000.00")
-    siniestralidad = st.number_input("Siniestralidad (%)", min_value=0.0, max_value=100.0, step=0.1)
-    submitted = st.button("Calcular Bonos")
+form_container = st.container()
+with form_container:
+    with st.form("form_bonos"):
+        nombre_agente = st.text_input("Nombre del Agente")
+        tipo_bono = st.selectbox("Tipo de Bono", ["", "Autos", "Daños"])
+        produccion_input = st.text_input("Producción Total ($)", placeholder="Ej. $1,000,000.00")
+        siniestralidad = st.number_input("Siniestralidad (%)", min_value=0.0, max_value=100.0, step=0.1)
+        submitted = st.form_submit_button("Calcular Bonos")
 
-    if not submitted:
-        st.markdown("<p style='text-align: center; font-size: 14px; color: gray;'>Aplican restricciones y condiciones conforme al cuaderno oficial de HDI Seguros 2025.</p>", unsafe_allow_html=True)
+if not submitted:
+    st.markdown("<p style='text-align: center; font-size: 14px; color: gray;'>Aplican restricciones y condiciones conforme al cuaderno oficial de HDI Seguros 2025.</p>", unsafe_allow_html=True)
 
 if submitted:
-    st.session_state.formulario_mostrado = False
+    form_container.empty()
 
     try:
         produccion = limpiar_formato(produccion_input)
@@ -127,4 +124,3 @@ if submitted:
 
     except Exception as e:
         st.error(f"Ocurrió un error al procesar los datos: {e}")
-
