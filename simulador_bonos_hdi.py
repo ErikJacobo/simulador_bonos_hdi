@@ -74,7 +74,7 @@ form_container = st.container()
 with form_container:
     with st.form("form_bonos"):
         nombre_agente = st.text_input("Nombre del Agente")
-        tipo_bono = st.selectbox("Tipo de Bono", ["", "Autos", "Daños"])
+        tipo_bono_seleccionado = st.selectbox("Tipo de Bono", ["", "Autos", "Daños"])
         produccion_input = st.text_input("Producción Total ($)", placeholder="Ej. $1,000,000.00")
         siniestralidad = st.number_input("Siniestralidad (%)", min_value=0.0, max_value=100.0, step=0.1)
         submitted = st.form_submit_button("Calcular Bonos")
@@ -95,7 +95,7 @@ if submitted:
         st.markdown(f"- Producción: **{formato_pesos(produccion)}**")
         st.markdown(f"- Siniestralidad: **{siniestralidad:.2f}%**")
 
-        if tipo_bono == "Autos":
+        if tipo_bono_seleccionado == "Autos":
             pct_prod, bono_prod, msg_prod = calcular_bono_produccion_autos(produccion)
             pct_rent, bono_rent, msg_rent = calcular_bono_rentabilidad_autos(produccion, siniestralidad)
             total_bono = bono_prod + bono_rent
@@ -106,7 +106,7 @@ if submitted:
             st.markdown(f"  - {msg_rent}")
             st.markdown(f"\n📌 **Total del Bono Autos: {formato_pesos(total_bono)}**")
 
-        elif tipo_bono == "Daños":
+        elif tipo_bono_seleccionado == "Daños":
             pct_prod, bono_prod, msg_prod = calcular_bono_produccion_danos(produccion)
             pct_rent, bono_rent, msg_rent = calcular_bono_rentabilidad_danos(produccion, siniestralidad)
             total_bono = bono_prod + bono_rent
